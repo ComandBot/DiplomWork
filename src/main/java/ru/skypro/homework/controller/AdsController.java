@@ -12,11 +12,11 @@ import ru.skypro.homework.service.AdService;
 @RequiredArgsConstructor
 @RequestMapping("/ads")
 public class AdsController {
-    private final AdService adService;
-
-    public AdsController(AdService adService) {
-        this.adService = adService;
-    }
+//    private final AdService adService;
+//
+//    public AdsController(AdService adService) {
+//        this.adService = adService;
+//    }
 
     @GetMapping() // todo будет возвращать ResponseEntity, временно void
     public void getAllAds() {
