@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.service.UserUpdService;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("users")
-public class UsersController {
+public class UsersUpdController {
 
-    private final UserService userService;
+    private final UserUpdService userUpdService;
 
-    public UsersController(UserService userService) {
-        this.userService = userService;
+    public UsersUpdController(UserUpdService userService) {
+        this.userUpdService = userService;
     }
 
     @PostMapping("/set_password")
