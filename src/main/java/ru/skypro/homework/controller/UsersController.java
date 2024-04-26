@@ -5,17 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.UserInfoDto;
-import ru.skypro.homework.dto.UserNewPassDto;
+import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UserUpdDto;
-import ru.skypro.homework.service.UserUpdService;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("users")
-public class UsersUpdController {
+public class UsersController {
 
 //    private final UserUpdService userUpdService;
 //
@@ -24,23 +23,22 @@ public class UsersUpdController {
 //    }
 
     @PostMapping("/set_password")
-    public ResponseEntity<?> setPasswordUser(@RequestBody UserNewPassDto userNewPassDto) {
+    public ResponseEntity<?> setPasswordUser(@RequestBody NewPassword userNewPassDto) {
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserInfoDto> getUserInfo() {
+    public ResponseEntity<UserDto> getUserInfo() {
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdDto userUpdDto) {
+    public ResponseEntity<UserUpdDto> updateUser(@RequestBody UserUpdDto userUpdDto) {
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // todo будет возвращать ResponseEntity, временно void
-    public void updateUserAvatar() {
-
+    public ResponseEntity<?> updateUserAvatar(@RequestParam String image) {
+        return ResponseEntity.ok().build();
     }
 }

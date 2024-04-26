@@ -1,10 +1,9 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
-import org.springframework.http.ResponseEntity;
 
 @Data
-public class UserNewPassDto {
+public class NewPassword {
    private String currentPassword;
    private String newPassword;
 }
