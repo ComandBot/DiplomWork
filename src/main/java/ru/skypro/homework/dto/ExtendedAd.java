@@ -11,6 +11,6 @@ public class ExtendedAd {
     private String email;
     private String image;
     private String phone;
-    private String price;
+    private int price;
     private String title;
 }

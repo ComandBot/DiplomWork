@@ -2,6 +2,7 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -181,4 +182,159 @@ public class AdsController {
     public ResponseEntity<?> updateImage(@PathVariable int id, @RequestBody MultipartFile image) {
         return ResponseEntity.ok().build();
     }
+
+    @Operation(
+            tags = "Комментарии",
+            summary = "Получение комментариев объявления",
+            operationId = "getComments",
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
+                    )
+            ),
+            responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = Comments.class
+                    )
+
+            )),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            }
+    )
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<?> getComments(@PathVariable int id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            tags = "Комментарии",
+            summary = "Добавление комментария к объявлению",
+            operationId = "addComment",
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
+                    )
+            ),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = {@Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = CreateOrUpdateComment.class
+                            )
+                        )
+                    }
+            ),
+            responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                           implementation = Comments.class
+                    )
+            )),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            }
+    )
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<?> addComment(@PathVariable int id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            tags = "Комментарии",
+            summary = "Удаление комментария",
+            operationId = "deleteComment",
+            parameters = {
+              @Parameter(
+                      name = "adId",
+                      in = ParameterIn.PATH,
+                      required = true,
+                      schema = @Schema(
+                              type = "integer",
+                              format = "int32"
+                      )
+              ),
+              @Parameter(
+                      name = "commentId",
+                      in = ParameterIn.PATH,
+                      required = true,
+                      schema = @Schema(
+                              type = "integer",
+                              format = "int32"
+                      )
+              )
+            },
+            responses = {@ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            }
+    )
+    @DeleteMapping("/{adId}/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable int adId, @PathVariable int commentId) {
+        return ResponseEntity.ok().build();
+    }
+
+
+    @Operation(
+            tags = "Комментарии",
+            summary = "Обновление комментария",
+            operationId = "updateComment",
+            parameters = {
+                    @Parameter(
+                            name = "adId",
+                            in = ParameterIn.PATH,
+                            required = true,
+                            schema = @Schema(
+                                    type = "integer",
+                                    format = "int32"
+                            )
+                    ),
+                    @Parameter(
+                            name = "commentId",
+                            in = ParameterIn.PATH,
+                            required = true,
+                            schema = @Schema(
+                                    type = "integer",
+                                    format = "int32"
+                            )
+                    )
+            },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = CreateOrUpdateComment.class
+                            )
+                    )
+            ),
+            responses = {@ApiResponse(responseCode = "200", description = "OK",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = Comment.class
+                    )
+            )),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            }
+    )
+    @PatchMapping("/{adId}/comments/{commentId}")
+    public ResponseEntity<?> updateComment(@PathVariable int adId,
+                                           @PathVariable int commentId,
+                                           @RequestBody CreateOrUpdateComment createOrUpdateComment) {
+        return ResponseEntity.ok().build();
+    }
+
+
 }
