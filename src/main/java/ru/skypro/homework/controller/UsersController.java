@@ -87,15 +87,13 @@ public class UsersController {
     public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
         return ResponseEntity.ok(updateUser);
     }
-
     @Operation(
             tags = "Пользователи",
             summary = "Обновление аватара авторизованного пользователя",
             operationId = "updateUserImage",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            array = @ArraySchema(schema = @Schema(implementation = byte.class))
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE
                     )
             ),
             responses = {@ApiResponse(responseCode = "200", description = "OK"),
