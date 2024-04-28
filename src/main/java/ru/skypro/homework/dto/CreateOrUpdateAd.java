@@ -7,5 +7,5 @@ public class CreateOrUpdateAd {
 
     private String title;
     private int price;
-    private int description;
+    private String description;
 }

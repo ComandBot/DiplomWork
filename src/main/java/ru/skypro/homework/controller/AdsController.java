@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 
-import java.io.IOException;
-
 @Slf4j
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
@@ -47,13 +45,7 @@ public class AdsController {
             operationId = "addAd",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
-                            @Content(
-                               mediaType = MediaType.APPLICATION_JSON_VALUE,
-                               schema = @Schema(
-                                       implementation = CreateOrUpdateAd.class
-                               )
-                            )
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
                     }
             ),
             responses = {@ApiResponse(responseCode = "200", description = "OK" , content = @Content(
@@ -65,6 +57,7 @@ public class AdsController {
             }
 
     )
+    //TODO разобраться почему ответ 415 приходит и поправить
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAd(@RequestPart MultipartFile image, @RequestPart CreateOrUpdateAd properties) {
         return ResponseEntity.ok().build();
@@ -74,6 +67,15 @@ public class AdsController {
             tags = "Объявления",
             summary = "Получение информации об объявлении",
             operationId = "getAds",
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
+                    )
+            ),
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
@@ -93,6 +95,15 @@ public class AdsController {
             tags = "Объявления",
             summary = "Удаление объявления",
             operationId = "removeAd",
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
+                    )
+            ),
             responses = {
                     @ApiResponse(responseCode = "200", description = "OK"),
                     @ApiResponse(responseCode = "204", description = "No Content"),
@@ -110,6 +121,15 @@ public class AdsController {
             tags = "Объявления",
             summary = "Обновление информации об объявлении",
             operationId = "updateAds",
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
+                    )
+            ),
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
                                 mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -157,6 +177,15 @@ public class AdsController {
             tags = "Объявления",
             summary = "Обновление картинки объявления",
             operationId = "updateImage",
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
+                    )
+            ),
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
                             mediaType = MediaType.MULTIPART_FORM_DATA_VALUE
