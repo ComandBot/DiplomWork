@@ -13,4 +13,5 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name= "ads")
 public class AdEntity {
+
 }
