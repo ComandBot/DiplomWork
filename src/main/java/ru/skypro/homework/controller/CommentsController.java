@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.CommentDto;
-import ru.skypro.homework.dto.CommentsDto;
+import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
-import ru.skypro.homework.service.CommentService;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -24,7 +22,7 @@ public class CommentsController {
 
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<CommentsDto> getComment(@PathVariable Integer id) {
+    public ResponseEntity<Comments> getComment(@PathVariable Integer id) {
         return ResponseEntity.ok().build();
     }
 
