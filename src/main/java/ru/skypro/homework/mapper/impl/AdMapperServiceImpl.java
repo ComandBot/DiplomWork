@@ -1,18 +1,19 @@
-package ru.skypro.homework.mapper;
+package ru.skypro.homework.mapper.impl;
 
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.entity.AdEntity;
+import ru.skypro.homework.mapper.AdMapperService;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 
 @Service
-public class AdMapper implements MapperService<AdEntity, Ad> {
+public class AdMapperServiceImpl implements AdMapperService {
 
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    public AdMapper(UserRepository userRepository, CommentRepository commentRepository) {
+    public AdMapperServiceImpl(UserRepository userRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
     }

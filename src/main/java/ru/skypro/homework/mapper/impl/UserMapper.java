@@ -1,4 +1,4 @@
-package ru.skypro.homework.mapper;
+package ru.skypro.homework.mapper.impl;
 
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
