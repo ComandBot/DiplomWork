@@ -2,6 +2,7 @@ package ru.skypro.homework.entity;
 
 import lombok.Data;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,4 +18,7 @@ public class AdEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToMany(mappedBy = "adEntity", fetch = FetchType.LAZY)
+    private List<CommentEntity> commentEntities;
 }

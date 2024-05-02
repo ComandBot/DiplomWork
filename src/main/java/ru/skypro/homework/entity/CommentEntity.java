@@ -18,6 +18,6 @@ public class CommentEntity {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @JoinColumn(name = "ad_id")
+    private AdEntity adEntity;
 }
