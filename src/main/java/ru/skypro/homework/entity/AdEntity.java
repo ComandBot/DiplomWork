@@ -24,8 +24,8 @@ public class AdEntity {
     private PhotoEntity photo;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private UserEntity author;
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @OneToMany(mappedBy = "ad")
     private Collection<CommentEntity> comments;

@@ -3,8 +3,10 @@ package ru.skypro.homework.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -16,11 +18,13 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String text;
-    private Long createdAt;
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private UserEntity author;
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "ad_id")
