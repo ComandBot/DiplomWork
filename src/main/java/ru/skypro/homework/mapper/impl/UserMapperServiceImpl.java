@@ -1,12 +1,15 @@
 package ru.skypro.homework.mapper.impl;
 
+import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.mapper.UserMapperService;
 
-public class UserMapper {
+@Service
+public class UserMapperServiceImpl implements UserMapperService {
 
-// Entity -> Dto
-    public User toUserDto(UserEntity userEntity){
+    @Override
+    public User mappingToDto(UserEntity userEntity){
         User userDto = new User();
         userDto.setId(userEntity.getId());
         userDto.setEmail(userEntity.getEmail());
@@ -15,8 +18,9 @@ public class UserMapper {
         userDto.setPhone(userEntity.getPhone());
         return userDto;
     }
-// Dto -> Entity
-    public UserEntity toUserEntity(User userDto){
+
+    @Override
+    public UserEntity mappingToEntity(User userDto){
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userDto.getId());
         userEntity.setEmail(userDto.getEmail());
