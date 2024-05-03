@@ -12,9 +12,11 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(columnDefinition = "TEXT")
     private String text;
+
     @Column(name = "created_at")
-    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @ManyToOne

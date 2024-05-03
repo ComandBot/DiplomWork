@@ -59,7 +59,9 @@ public class AdsController {
     )
     //TODO разобраться почему ответ 415 приходит и поправить
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addAd(@RequestPart MultipartFile image, @RequestPart CreateOrUpdateAd properties) {
+    public ResponseEntity<?> addAd(@RequestPart MultipartFile image,
+                                   @Schema(name = "CreateOrUpdateAd", type = "string", format = "binary")
+                                   @RequestPart("properties") CreateOrUpdateAd properties) {
         return ResponseEntity.ok().build();
     }
 
