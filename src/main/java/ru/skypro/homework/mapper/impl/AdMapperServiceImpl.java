@@ -1,26 +1,16 @@
 package ru.skypro.homework.mapper.impl;
 
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.AdDto;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.mapper.AdMapperService;
-import ru.skypro.homework.repository.CommentRepository;
-import ru.skypro.homework.repository.UserRepository;
 
 @Service
 public class AdMapperServiceImpl implements AdMapperService {
 
-    private final UserRepository userRepository;
-    private final CommentRepository commentRepository;
-
-    public AdMapperServiceImpl(UserRepository userRepository, CommentRepository commentRepository) {
-        this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
-    }
-
     @Override
-    public Ad mappingToDto(AdEntity entity) {
-        Ad result = new Ad();
+    public AdDto mappingToDto(AdEntity entity) {
+        AdDto result = new AdDto();
         result.setAuthor(entity.getUser().getId());
         result.setImage(entity.getImage());
         result.setPk(entity.getId());
@@ -30,14 +20,12 @@ public class AdMapperServiceImpl implements AdMapperService {
     }
 
     @Override
-    public AdEntity mappingToEntity(Ad dto) {
+    public AdEntity mappingToEntity(AdDto dto) {
         AdEntity adEntity = new AdEntity();
         adEntity.setId(dto.getPk());
         adEntity.setImage(dto.getImage());
         adEntity.setPrice(dto.getPrice());
         adEntity.setTitle(dto.getTitle());
-        adEntity.setUser(userRepository.findById(dto.getAuthor()).orElse(null));
-        adEntity.setCommentEntities(commentRepository.findAllByAdEntity_Id(dto.getPk()));
         return adEntity;
     }
 }

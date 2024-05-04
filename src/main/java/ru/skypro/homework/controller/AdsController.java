@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Ads.class
+                            implementation = AdsDto.class
                     )
                 ))
             }
@@ -45,12 +46,16 @@ public class AdsController {
             operationId = "addAd",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                    encoding = @Encoding(
+                            name = "properties",
+                            contentType = "application/json"
+                    ))
                     }
             ),
             responses = {@ApiResponse(responseCode = "200", description = "OK" , content = @Content(
                     schema = @Schema(
-                            implementation = Ad.class
+                            implementation = AdDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
@@ -59,7 +64,9 @@ public class AdsController {
     )
     //TODO разобраться почему ответ 415 приходит и поправить
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addAd(@RequestPart MultipartFile image, CreateOrUpdateAd properties) {
+
+    public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
+                                   @RequestPart(name = "properties") CreateOrUpdateAdDto properties) {
         return ResponseEntity.ok().build();
     }
 
@@ -79,7 +86,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = ExtendedAd.class
+                            implementation = ExtendedAdDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -134,7 +141,7 @@ public class AdsController {
                     content = {@Content(
                                 mediaType = MediaType.APPLICATION_JSON_VALUE,
                                 schema = @Schema(
-                                        implementation = CreateOrUpdateAd.class
+                                        implementation = CreateOrUpdateAdDto.class
                                 )
                             )
                     }
@@ -142,7 +149,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Ad.class
+                            implementation = AdDto.class
                     )
             )),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -151,7 +158,7 @@ public class AdsController {
             }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAd createOrUpdateAd) {
+    public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
         return ResponseEntity.ok().build();
     }
 
@@ -162,7 +169,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Ads.class
+                            implementation = AdsDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
@@ -228,7 +235,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Comments.class
+                            implementation = CommentsDto.class
                     )
 
             )),
@@ -258,7 +265,7 @@ public class AdsController {
                     content = {@Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = CreateOrUpdateComment.class
+                                    implementation = CreateOrUpdateCommentDto.class
                             )
                         )
                     }
@@ -266,7 +273,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                           implementation = Comments.class
+                           implementation = CommentsDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -342,7 +349,7 @@ public class AdsController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = CreateOrUpdateComment.class
+                                    implementation = CreateOrUpdateCommentDto.class
                             )
                     )
             ),
@@ -350,7 +357,7 @@ public class AdsController {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Comment.class
+                            implementation = CommentDto.class
                     )
             )),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -361,7 +368,7 @@ public class AdsController {
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
-                                           @RequestBody CreateOrUpdateComment createOrUpdateComment) {
+                                           @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
         return ResponseEntity.ok().build();
     }
 

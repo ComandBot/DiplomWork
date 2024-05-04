@@ -17,6 +17,9 @@ public class AdEntity {
     @Column(columnDefinition = "TEXT")
     private String title;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
