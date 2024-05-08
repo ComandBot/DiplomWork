@@ -10,11 +10,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.repository.UserRepository;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class WebSecurityConfig {
+
+    private final UserRepository userRepository;
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -24,6 +27,10 @@ public class WebSecurityConfig {
             "/login",
             "/register"
     };
+
+    public WebSecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {

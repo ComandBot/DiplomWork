@@ -1,8 +1,10 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.RegisterDto;
@@ -14,7 +16,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsManager manager;
     private final PasswordEncoder encoder;
 
-    public AuthServiceImpl(UserDetailsManager manager,
+    public AuthServiceImpl(@Qualifier(value = "myUserDetailsManager") UserDetailsManager manager,
                            PasswordEncoder passwordEncoder) {
         this.manager = manager;
         this.encoder = passwordEncoder;
