@@ -25,7 +25,4 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<AdEntity> adEntities;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<CommentEntity> commentEntities;
 }
