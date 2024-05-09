@@ -73,7 +73,7 @@ public class UsersController {
     )
     @GetMapping("/me")
     public ResponseEntity<UserDto> getUser() {
-        return ResponseEntity.ok(new UserDto());
+        return ResponseEntity.ok(userService.getUser());
     }
 
     @Operation(

@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.config.MyUserDetailsManager;
+import ru.skypro.homework.config.MyUserDetailsService;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
@@ -30,20 +30,26 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapperService userMapperService;
-    private final MyUserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapperService userMapperService, MyUserDetailsManager userDetailsManager, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, UserMapperService userMapperService, MyUserDetailsService userDetailsManager, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapperService = userMapperService;
-        this.userDetailsManager = userDetailsManager;
         this.passwordEncoder = passwordEncoder;
     }
 
     public boolean setPassword(NewPasswordDto newPasswordDto) {
-        userDetailsManager.setVerifyPassword(false);
-        userDetailsManager.changePassword(newPasswordDto.getCurrentPassword(), newPasswordDto.getNewPassword());
-        return userDetailsManager.isVerifyPassword();
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(getUserName());
+        if (userEntityOptional.isEmpty()) {
+            return false;
+        }
+        UserEntity userEntity = userEntityOptional.get();
+        if (!passwordEncoder.matches(newPasswordDto.getCurrentPassword(), userEntity.getPassword())) {
+            return false;
+        }
+        userEntity.setPassword(passwordEncoder.encode(newPasswordDto.getNewPassword()));
+        userRepository.save(userEntity);
+        return true;
     }
 
     public UserDto getUser() {
