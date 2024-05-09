@@ -3,12 +3,15 @@ package ru.skypro.homework.service.impl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.config.MyUserDetailsManager;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.mapper.UserMapperService;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 
@@ -26,17 +29,31 @@ public class UserServiceImpl implements UserService {
     private String pathDir;
 
     private final UserRepository userRepository;
+    private final UserMapperService userMapperService;
+    private final MyUserDetailsManager userDetailsManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapperService userMapperService, MyUserDetailsManager userDetailsManager, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userMapperService = userMapperService;
+        this.userDetailsManager = userDetailsManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public boolean setPassword(NewPasswordDto newPasswordDto) {
-        return false;
+        userDetailsManager.setVerifyPassword(false);
+        userDetailsManager.changePassword(newPasswordDto.getCurrentPassword(), newPasswordDto.getNewPassword());
+        return userDetailsManager.isVerifyPassword();
     }
 
     public UserDto getUser() {
-        return null;
+        String userName = getUserName();
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userName);
+        if (userEntityOptional.isEmpty()) {
+            return null;
+        }
+        UserEntity userEntity = userEntityOptional.get();
+        return userMapperService.mappingToDto(userEntity);
     }
 
     public UpdateUserDto updateUser() {

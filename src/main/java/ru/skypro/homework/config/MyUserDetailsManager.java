@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.RegisterDto;
-import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
 
@@ -22,6 +19,9 @@ public class MyUserDetailsManager implements UserDetailsManager {
 
     private final UserRepository userRepository;
     private UserEntity userEntity;
+    private boolean isVerifyPassword = false;
+
+    private PasswordEncoder passwordEncoder;
 
     public MyUserDetailsManager(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -45,17 +45,19 @@ public class MyUserDetailsManager implements UserDetailsManager {
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
-        String username = getUserName();
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(username);
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(getUserName());
         if (userEntityOptional.isEmpty()) {
+            isVerifyPassword = false;
             return;
         }
         UserEntity userEntity = userEntityOptional.get();
-        if (oldPassword.equals(userEntity.getPassword())) {
-            userEntity.setPassword(newPassword);
-            userRepository.save(userEntity);
+        if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
+            isVerifyPassword = false;
+            return;
         }
-
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        isVerifyPassword = true;
+        userRepository.save(userEntity);
     }
 
     @Override
@@ -84,5 +86,21 @@ public class MyUserDetailsManager implements UserDetailsManager {
 
     public void setUserEntity(UserEntity userEntity) {
         this.userEntity = userEntity;
+    }
+
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public boolean isVerifyPassword() {
+        return isVerifyPassword;
+    }
+
+    public void setVerifyPassword(boolean verifyPassword) {
+        isVerifyPassword = verifyPassword;
+    }
+
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 }
