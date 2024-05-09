@@ -58,10 +58,6 @@ public class WebSecurityConfig {
                                         .authenticated())
                 .cors()
                 .and()
-                .logout()
-                .permitAll()
-                .logoutSuccessUrl("/users/set_password")
-                .and()
                 .httpBasic(withDefaults());
         return http.build();
     }
