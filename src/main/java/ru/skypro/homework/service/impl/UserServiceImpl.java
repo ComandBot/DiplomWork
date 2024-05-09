@@ -11,6 +11,7 @@ import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.mapper.UpdateUserDtoMapperService;
 import ru.skypro.homework.mapper.UserMapperService;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
@@ -32,7 +33,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapperService userMapperService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapperService userMapperService, MyUserDetailsService userDetailsManager, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserMapperService userMapperService,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapperService = userMapperService;
         this.passwordEncoder = passwordEncoder;
@@ -62,8 +65,17 @@ public class UserServiceImpl implements UserService {
         return userMapperService.mappingToDto(userEntity);
     }
 
-    public UpdateUserDto updateUser() {
-        return null;
+    public UpdateUserDto updateUser(UpdateUserDto updateUserDto) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(getUserName());
+        if (userEntityOptional.isEmpty()) {
+            return null;
+        }
+        UserEntity userEntity = userEntityOptional.get();
+        userEntity.setFirstName(updateUserDto.getFirstName());
+        userEntity.setLastName(updateUserDto.getLastName());
+        userEntity.setPhone(updateUserDto.getPhone());
+        userRepository.save(userEntity);
+        return updateUserDto;
     }
 
     public void updateUserImage(MultipartFile file) throws IOException {
