@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
@@ -36,6 +37,7 @@ public class AdsController {
 
     )
     @GetMapping
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> getAllAds() {
         return ResponseEntity.ok().build();
     }
@@ -64,7 +66,7 @@ public class AdsController {
     )
     //TODO разобраться почему ответ 415 приходит и поправить
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
                                    @RequestPart(name = "properties") CreateOrUpdateAdDto properties) {
         return ResponseEntity.ok().build();
@@ -158,6 +160,7 @@ public class AdsController {
             }
     )
     @PatchMapping("/{id}")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
         return ResponseEntity.ok().build();
     }
@@ -176,6 +179,7 @@ public class AdsController {
             }
     )
     @GetMapping("/me")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> getAdsMe() {
         return ResponseEntity.ok().build();
     }
@@ -215,6 +219,7 @@ public class AdsController {
             }
     )
     @PatchMapping(value = "/{id}/image" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> updateImage(@PathVariable int id, @RequestBody MultipartFile image) {
         return ResponseEntity.ok().build();
     }
@@ -281,6 +286,7 @@ public class AdsController {
             }
     )
     @PostMapping("/{id}/comments")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> addComment(@PathVariable int id) {
         return ResponseEntity.ok().build();
     }
@@ -366,6 +372,7 @@ public class AdsController {
             }
     )
     @PatchMapping("/{adId}/comments/{commentId}")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
                                            @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
