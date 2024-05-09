@@ -8,7 +8,7 @@ import ru.skypro.homework.service.UserService;
 
 @Service
 public class AdServiceImpl implements AdService {
-    @Value("${ads.photo.dir.path}")
+    @Value(value = "${photo.dir.path}")
     private String photoDir;
     private final AdRepository adRepository;
     private final UserService userService;

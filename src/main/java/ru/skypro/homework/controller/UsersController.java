@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.service.impl.UserServiceImpl;
+
 import java.io.IOException;
 
 @Slf4j
@@ -19,6 +22,12 @@ import java.io.IOException;
 @CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/users")
 public class UsersController {
+
+    private final UserServiceImpl userService;
+
+    public UsersController(UserServiceImpl userService) {
+        this.userService = userService;
+    }
 
     @Operation(
             tags = "Пользователи",
@@ -105,7 +114,7 @@ public class UsersController {
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestPart MultipartFile image) throws IOException {
-        byte[] file = image.getBytes();
+        userService.updateUserImage(image);
         return ResponseEntity.ok().build();
     }
 

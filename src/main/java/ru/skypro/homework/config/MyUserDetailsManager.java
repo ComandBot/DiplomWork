@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.RegisterDto;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
@@ -19,17 +20,16 @@ import java.util.Optional;
 @Service
 public class MyUserDetailsManager implements UserDetailsManager {
 
-    @Autowired
-    private  UserRepository userRepository;
+    private final UserRepository userRepository;
+    private UserEntity userEntity;
+
+    public MyUserDetailsManager(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void createUser(UserDetails user) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(user.getUsername());
-        String role = user.getAuthorities().stream().findFirst().get().getAuthority().split("_")[1];
-        Role roleEntity = Role.USER.toString().equals(role) ? Role.USER : Role.ADMIN;
         userEntity.setPassword(user.getPassword());
-        userEntity.setRole(roleEntity);
         userRepository.save(userEntity);
     }
 
@@ -80,5 +80,9 @@ public class MyUserDetailsManager implements UserDetailsManager {
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 }
