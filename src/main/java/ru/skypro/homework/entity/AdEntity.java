@@ -1,32 +1,29 @@
 package ru.skypro.homework.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name= "ads")
 public class AdEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String title;
-    private Integer price;
-    private String description;
+    private int id;
+    private String image;
+    private int price;
 
-    @OneToOne
-    private PhotoEntity photo;
+    @Column(columnDefinition = "TEXT")
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "ad")
-    private Collection<CommentEntity> comments;
+    @OneToMany(mappedBy = "adEntity", fetch = FetchType.LAZY)
+    private List<CommentEntity> commentEntities;
 }

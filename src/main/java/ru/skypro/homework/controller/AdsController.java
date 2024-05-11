@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
@@ -28,13 +30,14 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Ads.class
+                            implementation = AdsDto.class
                     )
                 ))
             }
 
     )
     @GetMapping
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> getAllAds() {
         return ResponseEntity.ok().build();
     }
@@ -45,12 +48,16 @@ public class AdsController {
             operationId = "addAd",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                    encoding = @Encoding(
+                            name = "properties",
+                            contentType = "application/json"
+                    ))
                     }
             ),
             responses = {@ApiResponse(responseCode = "200", description = "OK" , content = @Content(
                     schema = @Schema(
-                            implementation = Ad.class
+                            implementation = AdDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
@@ -59,7 +66,9 @@ public class AdsController {
     )
     //TODO разобраться почему ответ 415 приходит и поправить
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addAd(@RequestPart MultipartFile image, @RequestPart CreateOrUpdateAd properties) {
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
+                                   @RequestPart(name = "properties") CreateOrUpdateAdDto properties) {
         return ResponseEntity.ok().build();
     }
 
@@ -79,7 +88,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = ExtendedAd.class
+                            implementation = ExtendedAdDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -134,7 +143,7 @@ public class AdsController {
                     content = {@Content(
                                 mediaType = MediaType.APPLICATION_JSON_VALUE,
                                 schema = @Schema(
-                                        implementation = CreateOrUpdateAd.class
+                                        implementation = CreateOrUpdateAdDto.class
                                 )
                             )
                     }
@@ -142,7 +151,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Ad.class
+                            implementation = AdDto.class
                     )
             )),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -151,7 +160,8 @@ public class AdsController {
             }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAd createOrUpdateAd) {
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
         return ResponseEntity.ok().build();
     }
 
@@ -162,13 +172,14 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Ads.class
+                            implementation = AdsDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }
     )
     @GetMapping("/me")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> getAdsMe() {
         return ResponseEntity.ok().build();
     }
@@ -208,6 +219,7 @@ public class AdsController {
             }
     )
     @PatchMapping(value = "/{id}/image" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> updateImage(@PathVariable int id, @RequestBody MultipartFile image) {
         return ResponseEntity.ok().build();
     }
@@ -228,7 +240,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Comments.class
+                            implementation = CommentsDto.class
                     )
 
             )),
@@ -258,7 +270,7 @@ public class AdsController {
                     content = {@Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = CreateOrUpdateComment.class
+                                    implementation = CreateOrUpdateCommentDto.class
                             )
                         )
                     }
@@ -266,7 +278,7 @@ public class AdsController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                           implementation = Comments.class
+                           implementation = CommentsDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -274,6 +286,7 @@ public class AdsController {
             }
     )
     @PostMapping("/{id}/comments")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> addComment(@PathVariable int id) {
         return ResponseEntity.ok().build();
     }
@@ -342,7 +355,7 @@ public class AdsController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = CreateOrUpdateComment.class
+                                    implementation = CreateOrUpdateCommentDto.class
                             )
                     )
             ),
@@ -350,7 +363,7 @@ public class AdsController {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = Comment.class
+                            implementation = CommentDto.class
                     )
             )),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -359,9 +372,10 @@ public class AdsController {
             }
     )
     @PatchMapping("/{adId}/comments/{commentId}")
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
-                                           @RequestBody CreateOrUpdateComment createOrUpdateComment) {
+                                           @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
         return ResponseEntity.ok().build();
     }
 

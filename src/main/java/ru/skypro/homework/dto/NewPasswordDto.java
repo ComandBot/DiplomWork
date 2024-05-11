@@ -1,10 +1,9 @@
 package ru.skypro.homework.dto;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import lombok.Data;
 
 @Data
-public class NewPassword {
+public class NewPasswordDto {
 
     private String currentPassword;
     private String newPassword;

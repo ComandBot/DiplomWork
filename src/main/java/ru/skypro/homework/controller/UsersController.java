@@ -5,20 +5,34 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.dto.NewPasswordDto;
+import ru.skypro.homework.dto.UpdateUserDto;
+import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.service.impl.UserServiceImpl;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/users")
 public class UsersController {
+
+    private final UserServiceImpl userService;
+
+    public UsersController(UserServiceImpl userService) {
+        this.userService = userService;
+    }
 
     @Operation(
             tags = "Пользователи",
@@ -28,7 +42,7 @@ public class UsersController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = NewPassword.class
+                                    implementation = NewPasswordDto.class
                             )
                     )
             ),
@@ -39,7 +53,15 @@ public class UsersController {
 
     )
     @PostMapping("/set_password")
-    public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword) {
+    public ResponseEntity<?> setPassword(@RequestBody NewPasswordDto newPasswordDto, HttpServletRequest request) {
+        if (!userService.setPassword(newPasswordDto)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        Optional.ofNullable(request.getSession(false))
+                .ifPresent(session -> {
+                    session.invalidate();
+                    SecurityContextHolder.clearContext();
+                });
         return ResponseEntity.ok().build();
     }
 
@@ -50,7 +72,7 @@ public class UsersController {
             responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = User.class
+                            implementation = UserDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
@@ -58,8 +80,8 @@ public class UsersController {
 
     )
     @GetMapping("/me")
-    public ResponseEntity<User> getUser() {
-        return ResponseEntity.ok(new User());
+    public ResponseEntity<UserDto> getUser() {
+        return ResponseEntity.ok(userService.getUser());
     }
 
     @Operation(
@@ -70,7 +92,7 @@ public class UsersController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = UpdateUser.class
+                                    implementation = UpdateUserDto.class
                             )
                     )
             ),
@@ -78,7 +100,7 @@ public class UsersController {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
-                            implementation = UpdateUser.class
+                            implementation = UpdateUserDto.class
                     )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
@@ -86,8 +108,9 @@ public class UsersController {
 
     )
     @PatchMapping("/me")
-    public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
-        return ResponseEntity.ok(updateUser);
+    public ResponseEntity<UpdateUserDto> updateUser(@RequestBody UpdateUserDto updateUserDto) {
+        userService.updateUser(updateUserDto);
+        return ResponseEntity.ok(updateUserDto);
     }
     @Operation(
             tags = "Пользователи",
@@ -105,7 +128,7 @@ public class UsersController {
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestPart MultipartFile image) throws IOException {
-        byte[] file = image.getBytes();
+        userService.updateUserImage(image);
         return ResponseEntity.ok().build();
     }
 
