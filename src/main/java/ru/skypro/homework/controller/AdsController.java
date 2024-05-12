@@ -107,8 +107,8 @@ public class AdsController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAds(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ExtendedAdDto> getAds(@PathVariable int id) {
+        return ResponseEntity.ok(adService.getAd(id));
     }
 
     @Operation(

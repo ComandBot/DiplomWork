@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDto;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
+import ru.skypro.homework.dto.ExtendedAdDto;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.AdMapperService;
@@ -63,6 +64,26 @@ public class AdServiceImpl implements AdService {
         adEntity.setImage(path.toString());
         adRepository.save(adEntity);
         return adMapperService.mappingToDto(adEntity);
+    }
+
+    @Override
+    public ExtendedAdDto getAd(int id) {
+        Optional<AdEntity> adEntityOptional = adRepository.findById(id);
+        if (adEntityOptional.isEmpty()) {
+            return null;
+        }
+        AdEntity adEntity = adEntityOptional.get();
+        ExtendedAdDto result = new ExtendedAdDto();
+        result.setPk(adEntity.getId());
+        result.setAuthorFirstName(adEntity.getUser().getFirstName());
+        result.setAuthorLastName(adEntity.getUser().getLastName());
+        result.setDescription(adEntity.getDescription());
+        result.setEmail(adEntity.getUser().getEmail());
+        result.setImage(adEntity.getImage());
+        result.setPhone(adEntity.getUser().getPhone());
+        result.setPrice(adEntity.getPrice());
+        result.setTitle(adEntity.getTitle());
+        return result;
     }
 
     private String getUserName() {
