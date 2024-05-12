@@ -15,6 +15,7 @@ import ru.skypro.homework.mapper.UpdateUserDtoMapperService;
 import ru.skypro.homework.mapper.UserMapperService;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.utils.WriteImage;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -85,16 +86,8 @@ public class UserServiceImpl implements UserService {
             return;
         }
         UserEntity userEntity = userEntityOptional.get();
-        Path filePath = Path.of(pathDir, userEntity.getId() + "." + getExtension(file.getOriginalFilename()));
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
-        try (InputStream is = file.getInputStream();
-             OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-             BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)){
-            bis.transferTo(bos);
-        }
-        userEntity.setImage(filePath.toString());
+        Path path = WriteImage.loadImage(file, pathDir, userEntity.getId());
+        userEntity.setImage(path.toString());
         userRepository.save(userEntity);
     }
 
