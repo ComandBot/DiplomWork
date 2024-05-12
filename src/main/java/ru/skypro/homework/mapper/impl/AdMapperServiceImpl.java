@@ -2,6 +2,7 @@ package ru.skypro.homework.mapper.impl;
 
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.AdDto;
+import ru.skypro.homework.dto.CreateOrUpdateAdDto;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.mapper.AdMapperService;
 
@@ -28,4 +29,5 @@ public class AdMapperServiceImpl implements AdMapperService {
         adEntity.setTitle(dto.getTitle());
         return adEntity;
     }
+
 }
