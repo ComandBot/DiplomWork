@@ -15,4 +15,6 @@ public interface AdService {
     AdDto addAd(MultipartFile image, CreateOrUpdateAdDto properties) throws IOException;
 
     ExtendedAdDto getAd(int id);
+
+    boolean removeAd(int id) throws IOException;
 }

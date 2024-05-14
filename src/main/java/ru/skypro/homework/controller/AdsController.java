@@ -47,7 +47,6 @@ public class AdsController {
 
     )
     @GetMapping
-    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> getAllAds() {
         return ResponseEntity.ok(adService.getAllAds());
     }
@@ -125,7 +124,6 @@ public class AdsController {
                     )
             ),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
                     @ApiResponse(responseCode = "204", description = "No Content"),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -133,8 +131,12 @@ public class AdsController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeAd(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> removeAd(@PathVariable int id) throws IOException {
+        if (!adService.removeAd(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Operation(

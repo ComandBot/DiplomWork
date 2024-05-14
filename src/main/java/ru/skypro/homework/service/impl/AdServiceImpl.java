@@ -16,7 +16,7 @@ import ru.skypro.homework.mapper.CreateOrUpdateService;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
-import ru.skypro.homework.utils.WriteImage;
+import ru.skypro.homework.utils.WorkWithFilesUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -60,7 +60,7 @@ public class AdServiceImpl implements AdService {
         AdEntity adEntity = createOrUpdateService.mappingToEntity(properties);
         adEntity.setUser(userEntity);
         adRepository.save(adEntity);
-        Path path = WriteImage.loadImage(image, photoDir, adEntity.getId());
+        Path path = WorkWithFilesUtils.loadImage(image, photoDir, adEntity.getId());
         adEntity.setImage(path.toString());
         adRepository.save(adEntity);
         return adMapperService.mappingToDto(adEntity);
@@ -84,6 +84,18 @@ public class AdServiceImpl implements AdService {
         result.setPrice(adEntity.getPrice());
         result.setTitle(adEntity.getTitle());
         return result;
+    }
+
+    @Override
+    public boolean removeAd(int id) throws IOException {
+        Optional<AdEntity> adEntityOptional = adRepository.findById(id);
+        if (adEntityOptional.isEmpty()) {
+            return false;
+        }
+        AdEntity adEntity = adEntityOptional.get();
+        adRepository.delete(adEntity);
+        WorkWithFilesUtils.deleteFile(adEntity.getImage());
+        return true;
     }
 
     private String getUserName() {

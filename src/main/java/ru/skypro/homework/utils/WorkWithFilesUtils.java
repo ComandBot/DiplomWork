@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
-public class WriteImage {
+public class WorkWithFilesUtils {
     public static Path loadImage(MultipartFile file, String pathDir, int id) throws IOException {
         Path filePath = Path.of(pathDir, id + "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -24,5 +24,10 @@ public class WriteImage {
 
     private static String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public static void deleteFile(String url) throws IOException {
+        Path path = Path.of(url);
+        Files.delete(path);
     }
 }
