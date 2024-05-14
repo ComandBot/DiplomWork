@@ -1,6 +1,9 @@
 package ru.skypro.homework.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class AdEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user;
 
     @OneToMany(mappedBy = "adEntity", fetch = FetchType.LAZY)

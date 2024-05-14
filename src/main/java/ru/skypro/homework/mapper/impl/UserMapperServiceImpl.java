@@ -9,13 +9,15 @@ import ru.skypro.homework.mapper.UserMapperService;
 public class UserMapperServiceImpl implements UserMapperService {
 
     @Override
-    public UserDto mappingToDto(UserEntity userEntity){
+    public UserDto mappingToDto(UserEntity userEntity) {
         UserDto userDto = new UserDto();
         userDto.setId(userEntity.getId());
         userDto.setEmail(userEntity.getEmail());
         userDto.setFirstName(userEntity.getFirstName());
         userDto.setLastName(userEntity.getLastName());
         userDto.setPhone(userEntity.getPhone());
+        userDto.setRole(userEntity.getRole());
+        userDto.setImage(userEntity.getImage());
         return userDto;
     }
 

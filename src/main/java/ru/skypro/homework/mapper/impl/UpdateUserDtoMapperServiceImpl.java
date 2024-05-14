@@ -1,9 +1,10 @@
 package ru.skypro.homework.mapper.impl;
 
+import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.UpdateUserDtoMapperService;
-
+@Service
 public class UpdateUserDtoMapperServiceImpl implements UpdateUserDtoMapperService {
     @Override
     public UserEntity mappingToEntity(UpdateUserDto dto) {
