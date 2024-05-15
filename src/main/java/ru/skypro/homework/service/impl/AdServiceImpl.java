@@ -112,6 +112,20 @@ public class AdServiceImpl implements AdService {
         return adMapperService.mappingToDto(adEntity);
     }
 
+    @Override
+    public AdsDto getAdsMe() {
+        String username = getUserName();
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(username);
+        if (userEntityOptional.isEmpty()) {
+            return null;
+        }
+        List<AdEntity> ads = adRepository.findAllByUser(userEntityOptional.get());
+        AdsDto adsDto = new AdsDto();
+        adsDto.setCount(ads.size());
+        adsDto.setResult(ads.stream().map(adMapperService::mappingToDto).collect(Collectors.toList()));
+        return adsDto;
+    }
+
 
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

@@ -8,6 +8,7 @@ import ru.skypro.homework.dto.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ExtendedAdDto;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface AdService {
     AdsDto getAllAds();
@@ -19,4 +20,6 @@ public interface AdService {
     boolean removeAd(int id) throws IOException;
 
     AdDto updateAds(int id, CreateOrUpdateAdDto createOrUpdateAdDto);
+
+    AdsDto getAdsMe();
 }

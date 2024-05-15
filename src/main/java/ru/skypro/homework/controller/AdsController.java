@@ -197,8 +197,8 @@ public class AdsController {
     )
     @GetMapping("/me")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> getAdsMe() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AdsDto> getAdsMe() {
+        return ResponseEntity.ok(adService.getAdsMe());
     }
 
     @Operation(
