@@ -1,5 +1,6 @@
 package ru.skypro.homework.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -9,8 +10,10 @@ import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 public class WorkWithFilesUtils {
-    public static Path loadImage(MultipartFile file, String pathDir, int id) throws IOException {
-        Path filePath = Path.of(pathDir, id + "." + getExtension(file.getOriginalFilename()));
+
+    public static String loadImage(MultipartFile file, String pathDir, int id, TypeImage image) throws IOException {
+        String fileName = image.toString() + id + "." + getExtension(file.getOriginalFilename());
+        Path filePath = Path.of(pathDir, fileName);
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (InputStream is = file.getInputStream();
@@ -19,7 +22,7 @@ public class WorkWithFilesUtils {
              BufferedOutputStream bos = new BufferedOutputStream(os, 1024)){
             bis.transferTo(bos);
         }
-        return filePath;
+        return fileName;
     }
 
     private static String getExtension(String fileName) {
@@ -29,5 +32,17 @@ public class WorkWithFilesUtils {
     public static void deleteFile(String url) throws IOException {
         Path path = Path.of(url);
         Files.delete(path);
+    }
+
+    public static byte[] getImage(String id, String pathDir) {
+        Path filePath = Path.of(pathDir + "\\" + id);
+        try (InputStream is = Files.newInputStream(filePath);
+             BufferedInputStream bis = new BufferedInputStream(is, 1024);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()){
+            bis.transferTo(baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

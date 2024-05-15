@@ -16,6 +16,7 @@ import ru.skypro.homework.mapper.CreateOrUpdateService;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.utils.TypeImage;
 import ru.skypro.homework.utils.WorkWithFilesUtils;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -60,8 +61,8 @@ public class AdServiceImpl implements AdService {
         AdEntity adEntity = createOrUpdateService.mappingToEntity(properties);
         adEntity.setUser(userEntity);
         adRepository.save(adEntity);
-        Path path = WorkWithFilesUtils.loadImage(image, photoDir, adEntity.getId());
-        adEntity.setImage(path.toString());
+        String path = WorkWithFilesUtils.loadImage(image, photoDir, adEntity.getId(), TypeImage.AD);
+        adEntity.setImage(path);
         adRepository.save(adEntity);
         return adMapperService.mappingToDto(adEntity);
     }

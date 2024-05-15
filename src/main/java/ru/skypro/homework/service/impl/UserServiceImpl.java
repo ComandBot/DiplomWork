@@ -13,6 +13,7 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.UserMapperService;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.utils.TypeImage;
 import ru.skypro.homework.utils.WorkWithFilesUtils;
 
 import java.io.*;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Value(value = "${avatars.dir.path}")
+    @Value(value = "${photo.dir.path}")
     private String pathDir;
 
     private final UserRepository userRepository;
@@ -81,18 +82,17 @@ public class UserServiceImpl implements UserService {
             return;
         }
         UserEntity userEntity = userEntityOptional.get();
-        Path path = WorkWithFilesUtils.loadImage(file, pathDir, userEntity.getId());
-        userEntity.setImage(path.toString());
+        String path = WorkWithFilesUtils.loadImage(file, pathDir, userEntity.getId(), TypeImage.AVATAR);
+        userEntity.setImage(path);
         userRepository.save(userEntity);
+    }
+
+    public byte[] getImage(String url) {
+        return WorkWithFilesUtils.getImage(url, pathDir);
     }
 
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();
     }
-
-    private String getExtension(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
-    }
-
 }
