@@ -174,8 +174,12 @@ public class AdsController {
     )
     @PatchMapping("/{id}")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AdDto> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
+        AdDto adDto = adService.updateAds(id, createOrUpdateAdDto);
+        if (adDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(adDto);
     }
 
     @Operation(

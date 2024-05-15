@@ -99,6 +99,20 @@ public class AdServiceImpl implements AdService {
         return true;
     }
 
+    @Override
+    public AdDto updateAds(int id, CreateOrUpdateAdDto createOrUpdateAdDto) {
+        Optional<AdEntity> adEntityOptional = adRepository.findById(id);
+        if (adEntityOptional.isEmpty()) {
+            return null;
+        }
+        AdEntity adEntity = adEntityOptional.get();
+        adEntity.setPrice(createOrUpdateAdDto.getPrice());
+        adEntity.setTitle(createOrUpdateAdDto.getTitle());
+        adEntity.setDescription(createOrUpdateAdDto.getDescription());
+        return adMapperService.mappingToDto(adEntity);
+    }
+
+
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();

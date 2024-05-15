@@ -17,4 +17,6 @@ public interface AdService {
     ExtendedAdDto getAd(int id);
 
     boolean removeAd(int id) throws IOException;
+
+    AdDto updateAds(int id, CreateOrUpdateAdDto createOrUpdateAdDto);
 }
