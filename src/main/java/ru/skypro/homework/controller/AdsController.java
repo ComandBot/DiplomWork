@@ -406,10 +406,14 @@ public class AdsController {
     )
     @PatchMapping("/{adId}/comments/{commentId}")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> updateComment(@PathVariable int adId,
+    public ResponseEntity<CommentDto> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
                                            @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
-        return ResponseEntity.ok().build();
+        CommentDto commentDto = commentService.updateComment(adId, commentId, createOrUpdateCommentDto);
+        if (commentDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentDto);
     }
 
 

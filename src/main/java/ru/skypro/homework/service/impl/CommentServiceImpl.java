@@ -71,4 +71,17 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(commentEntity);
         return commentMapperService.mappingToDto(commentEntity);
     }
+
+    @Override
+    public CommentDto updateComment(int adId, int commentId, CreateOrUpdateCommentDto createOrUpdateCommentDto) {
+        Optional<CommentEntity> commentEntityOptional =
+                commentRepository.findByAdEntity_IdAndId(adId, commentId);
+        if (commentEntityOptional.isEmpty()) {
+            return null;
+        }
+        CommentEntity commentEntity = commentEntityOptional.get();
+        commentEntity.setText(createOrUpdateCommentDto.getText());
+        commentRepository.save(commentEntity);
+        return commentMapperService.mappingToDto(commentEntity);
+    }
 }
