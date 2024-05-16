@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.CommentService;
 
 import java.io.IOException;
 
@@ -27,9 +28,11 @@ import java.io.IOException;
 public class AdsController {
 
     private final AdService adService;
+    private final CommentService commentService;
 
-    public AdsController(AdService adService) {
+    public AdsController(AdService adService, CommentService commentService) {
         this.adService = adService;
+        this.commentService = commentService;
     }
 
 
@@ -266,8 +269,12 @@ public class AdsController {
             }
     )
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> getComments(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CommentsDto> getComments(@PathVariable int id) {
+        CommentsDto commentsDto = commentService.getComments(id);
+        if (commentsDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentsDto);
     }
 
     @Operation(
@@ -304,8 +311,13 @@ public class AdsController {
     )
     @PostMapping("/{id}/comments")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> addComment(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CommentDto> addComment(@PathVariable int id,
+                                        @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
+        CommentDto commentDto = commentService.addComment(id, createOrUpdateCommentDto);
+        if (commentDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentDto);
     }
 
     @Operation(
