@@ -60,4 +60,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(commentEntity);
         return commentMapperService.mappingToDto(commentEntity);
     }
+
+    @Override
+    public CommentDto deleteComment(int adId, int commentId) {
+        Optional<CommentEntity> commentEntityOptional = commentRepository.findByAdEntity_IdAndId(adId, commentId);
+        if (commentEntityOptional.isEmpty()) {
+            return null;
+        }
+        CommentEntity commentEntity = commentEntityOptional.get();
+        commentRepository.delete(commentEntity);
+        return commentMapperService.mappingToDto(commentEntity);
+    }
 }

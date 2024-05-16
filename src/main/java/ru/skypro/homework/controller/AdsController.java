@@ -352,7 +352,11 @@ public class AdsController {
     )
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable int adId, @PathVariable int commentId) {
-        return ResponseEntity.ok().build();
+        CommentDto commentDto = commentService.deleteComment(adId, commentId);
+        if (commentDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentDto);
     }
 
 
