@@ -131,5 +131,4 @@ public class UsersController {
         userService.updateUserImage(image);
         return ResponseEntity.ok().build();
     }
-
 }

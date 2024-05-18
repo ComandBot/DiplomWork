@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.skypro.homework.entity.AdEntity;
+import ru.skypro.homework.entity.UserEntity;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface AdRepository extends JpaRepository<AdEntity, Integer> {
             "                                  where comments.id = ?1)",
             nativeQuery = true)
     AdEntity findByCommentId(int commentId);
+
+    List<AdEntity> findAllByUser(UserEntity userEntity);
 }

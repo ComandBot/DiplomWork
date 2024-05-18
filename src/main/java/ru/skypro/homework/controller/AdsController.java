@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.CommentService;
 
 import java.io.IOException;
 
@@ -27,9 +29,11 @@ import java.io.IOException;
 public class AdsController {
 
     private final AdService adService;
+    private final CommentService commentService;
 
-    public AdsController(AdService adService) {
+    public AdsController(AdService adService, CommentService commentService) {
         this.adService = adService;
+        this.commentService = commentService;
     }
 
 
@@ -47,7 +51,6 @@ public class AdsController {
 
     )
     @GetMapping
-    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> getAllAds() {
         return ResponseEntity.ok(adService.getAllAds());
     }
@@ -125,7 +128,6 @@ public class AdsController {
                     )
             ),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
                     @ApiResponse(responseCode = "204", description = "No Content"),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -133,8 +135,12 @@ public class AdsController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeAd(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    //@PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> removeAd(@PathVariable int id) throws IOException {
+        if (!adService.removeAd(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Operation(
@@ -172,8 +178,12 @@ public class AdsController {
     )
     @PatchMapping("/{id}")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AdDto> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
+        AdDto adDto = adService.updateAds(id, createOrUpdateAdDto);
+        if (adDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(adDto);
     }
 
     @Operation(
@@ -191,8 +201,8 @@ public class AdsController {
     )
     @GetMapping("/me")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> getAdsMe() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AdsDto> getAdsMe() {
+        return ResponseEntity.ok(adService.getAdsMe());
     }
 
     @Operation(
@@ -231,8 +241,15 @@ public class AdsController {
     )
     @PatchMapping(value = "/{id}/image" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> updateImage(@PathVariable int id, @RequestBody MultipartFile image) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> updateImage(@PathVariable int id, @RequestParam MultipartFile image) throws IOException {
+        byte[] res = adService.updateImage(id, image);
+        if (res == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(image.getContentType()));
+        headers.setContentLength(image.getSize());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(res);
     }
 
     @Operation(
@@ -260,8 +277,12 @@ public class AdsController {
             }
     )
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> getComments(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CommentsDto> getComments(@PathVariable int id) {
+        CommentsDto commentsDto = commentService.getComments(id);
+        if (commentsDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentsDto);
     }
 
     @Operation(
@@ -298,8 +319,13 @@ public class AdsController {
     )
     @PostMapping("/{id}/comments")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> addComment(@PathVariable int id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CommentDto> addComment(@PathVariable int id,
+                                        @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
+        CommentDto commentDto = commentService.addComment(id, createOrUpdateCommentDto);
+        if (commentDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentDto);
     }
 
     @Operation(
@@ -334,7 +360,11 @@ public class AdsController {
     )
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable int adId, @PathVariable int commentId) {
-        return ResponseEntity.ok().build();
+        CommentDto commentDto = commentService.deleteComment(adId, commentId);
+        if (commentDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentDto);
     }
 
 
@@ -384,10 +414,14 @@ public class AdsController {
     )
     @PatchMapping("/{adId}/comments/{commentId}")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> updateComment(@PathVariable int adId,
+    public ResponseEntity<CommentDto> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
                                            @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
-        return ResponseEntity.ok().build();
+        CommentDto commentDto = commentService.updateComment(adId, commentId, createOrUpdateCommentDto);
+        if (commentDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentDto);
     }
 
 
