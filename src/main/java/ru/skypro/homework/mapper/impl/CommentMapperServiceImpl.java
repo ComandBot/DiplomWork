@@ -27,7 +27,7 @@ public class CommentMapperServiceImpl implements CommentMapperService {
             commentDto.setAuthorImage(String.format(linkImage, imageEntity.getId()));
         }
         commentDto.setAuthorFirstName(userEntity.getFirstName());
-        long createAt = entity.getCreatedAt().toInstant(ZoneOffset.UTC).getEpochSecond();
+        long createAt = entity.getCreatedAt().toInstant(ZoneOffset.UTC).toEpochMilli();
         commentDto.setCreatedAt(createAt);
         commentDto.setPk(entity.getId());
         commentDto.setText(entity.getText());
