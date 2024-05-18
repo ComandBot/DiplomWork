@@ -134,7 +134,7 @@ public class AdsController {
             }
     )
     @DeleteMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
+    //@PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> removeAd(@PathVariable int id) throws IOException {
         if (!adService.removeAd(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

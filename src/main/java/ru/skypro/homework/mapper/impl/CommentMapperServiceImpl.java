@@ -1,5 +1,6 @@
 package ru.skypro.homework.mapper.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.entity.CommentEntity;
@@ -13,6 +14,9 @@ import java.time.ZoneOffset;
 @Service
 public class CommentMapperServiceImpl implements CommentMapperService {
 
+    @Value(value = "${ads.image}")
+    private String linkImage;
+
     @Override
     public CommentDto mappingToDto(CommentEntity entity) {
         CommentDto commentDto = new CommentDto();
@@ -20,7 +24,7 @@ public class CommentMapperServiceImpl implements CommentMapperService {
         commentDto.setAuthor(userEntity.getId());
         ImageEntity imageEntity = userEntity.getImageEntity();
         if (imageEntity != null) {
-            commentDto.setAuthorImage(imageEntity.getNameImage());
+            commentDto.setAuthorImage(String.format(linkImage, imageEntity.getId()));
         }
         commentDto.setAuthorFirstName(userEntity.getFirstName());
         long createAt = entity.getCreatedAt().toInstant(ZoneOffset.UTC).getEpochSecond();

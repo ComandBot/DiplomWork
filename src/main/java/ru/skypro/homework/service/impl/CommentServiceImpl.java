@@ -32,15 +32,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentsDto getComments(int id) {
-        List<CommentEntity> commentEntities = commentRepository.findAllByAdEntity_Id(id);
-        if (commentEntities == null || commentEntities.isEmpty()) {
+        Optional<AdEntity> adEntity = adRepository.findById(id);
+        if (adEntity.isEmpty()) {
             return null;
         }
+        List<CommentEntity> commentEntities = adEntity.get().getCommentEntities();
         CommentsDto commentsDto = new CommentsDto();
-        commentsDto.setCount(commentEntities.size());
-        commentsDto.setResults(commentEntities.stream()
-                .map(commentMapperService::mappingToDto)
-                .collect(Collectors.toList()));
+        if (commentEntities != null) {
+            commentsDto.setCount(commentEntities.size());
+            commentsDto.setResults(commentEntities.stream()
+                    .map(commentMapperService::mappingToDto)
+                    .collect(Collectors.toList()));
+        }
         return commentsDto;
     }
 
@@ -51,7 +54,6 @@ public class CommentServiceImpl implements CommentService {
             return null;
         }
         AdEntity adEntity = adEntityOptional.get();
-        UserEntity userEntity = adEntity.getUser();
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setText(createOrUpdateCommentDto.getText());
         LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);

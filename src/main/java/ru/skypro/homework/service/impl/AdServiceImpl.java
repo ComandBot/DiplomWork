@@ -106,7 +106,7 @@ public class AdServiceImpl implements AdService {
         ImageEntity imageEntity = adEntity.getImageEntity();
         if (imageEntity != null) {
             imageRepository.delete(imageEntity);
-            WorkWithFilesUtils.deleteFile(String.format(linkImage, imageEntity.getId()));
+            WorkWithFilesUtils.deleteFile(photoDir + "/" + imageEntity.getNameImage());
         }
         return true;
     }
@@ -121,6 +121,7 @@ public class AdServiceImpl implements AdService {
         adEntity.setPrice(createOrUpdateAdDto.getPrice());
         adEntity.setTitle(createOrUpdateAdDto.getTitle());
         adEntity.setDescription(createOrUpdateAdDto.getDescription());
+        adRepository.save(adEntity);
         return adMapperService.mappingToDto(adEntity);
     }
 

@@ -3,6 +3,7 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 public class ImageController {
     private final UserServiceImpl userService;
     private final ImageService imageService;

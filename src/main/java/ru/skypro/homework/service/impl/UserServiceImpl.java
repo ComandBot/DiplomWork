@@ -83,7 +83,13 @@ public class UserServiceImpl implements UserService {
             return;
         }
         UserEntity userEntity = userEntityOptional.get();
+        ImageEntity curImage = userEntity.getImageEntity();
         ImageEntity imageEntity = WorkWithFilesUtils.loadImage(file, pathDir);
+        if (curImage != null) {
+            String pathFile = pathDir + "/" + curImage.getNameImage();
+            WorkWithFilesUtils.deleteFile(pathFile);
+            imageEntity.setId(curImage.getId());
+        }
         imageRepository.save(imageEntity);
         userEntity.setImageEntity(imageEntity);
         userRepository.save(userEntity);
