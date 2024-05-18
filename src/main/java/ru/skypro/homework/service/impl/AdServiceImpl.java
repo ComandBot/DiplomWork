@@ -139,6 +139,21 @@ public class AdServiceImpl implements AdService {
         return adsDto;
     }
 
+    @Override
+    public byte[] updateImage(int id, MultipartFile image) throws IOException {
+        Optional<AdEntity> adEntityOptional = adRepository.findById(id);
+        if (adEntityOptional.isEmpty()) {
+            return null;
+        }
+        ImageEntity imageEntity = adEntityOptional.get().getImageEntity();
+        String oldName = imageEntity.getNameImage();
+        WorkWithFilesUtils.deleteFile(photoDir + "/" + oldName);
+        ImageEntity resImage = WorkWithFilesUtils.loadImage(image, photoDir);
+        resImage.setId(imageEntity.getId());
+        imageRepository.save(resImage);
+        return WorkWithFilesUtils.getImage(resImage.getNameImage(), photoDir);
+    }
+
 
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

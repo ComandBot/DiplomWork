@@ -35,7 +35,7 @@ public class WorkWithFilesUtils {
 
     public static void deleteFile(String url) throws IOException {
         Path path = Path.of(url);
-        Files.delete(path);
+        Files.deleteIfExists(path);
     }
 
     public static byte[] getImage(String fileName, String pathDir) {

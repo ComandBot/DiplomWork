@@ -1,5 +1,8 @@
 package ru.skypro.homework.service;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDto;
@@ -22,4 +25,6 @@ public interface AdService {
     AdDto updateAds(int id, CreateOrUpdateAdDto createOrUpdateAdDto);
 
     AdsDto getAdsMe();
+
+    byte[] updateImage(int id, MultipartFile image) throws IOException;
 }

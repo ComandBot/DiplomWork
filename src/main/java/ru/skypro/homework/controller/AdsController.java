@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -240,8 +241,15 @@ public class AdsController {
     )
     @PatchMapping(value = "/{id}/image" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> updateImage(@PathVariable int id, @RequestBody MultipartFile image) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> updateImage(@PathVariable int id, @RequestParam MultipartFile image) throws IOException {
+        byte[] res = adService.updateImage(id, image);
+        if (res == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(image.getContentType()));
+        headers.setContentLength(image.getSize());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(res);
     }
 
     @Operation(
