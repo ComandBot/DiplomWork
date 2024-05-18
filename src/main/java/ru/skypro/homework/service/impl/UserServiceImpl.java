@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
         this.imageRepository = imageRepository;
     }
 
+    @Override
     public boolean setPassword(NewPasswordDto newPasswordDto) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(getUserName());
         if (userEntityOptional.isEmpty()) {
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
     public UserDto getUser() {
         String userName = getUserName();
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userName);
@@ -63,6 +65,7 @@ public class UserServiceImpl implements UserService {
         return userMapperService.mappingToDto(userEntity);
     }
 
+    @Override
     public UpdateUserDto updateUser(UpdateUserDto updateUserDto) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(getUserName());
         if (userEntityOptional.isEmpty()) {
@@ -76,6 +79,7 @@ public class UserServiceImpl implements UserService {
         return updateUserDto;
     }
 
+    @Override
     public void updateUserImage(MultipartFile file) throws IOException {
         String userName = getUserName();
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userName);
@@ -95,6 +99,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
     }
 
+    @Override
     public byte[] getImage() {
         String userName = getUserName();
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userName);
