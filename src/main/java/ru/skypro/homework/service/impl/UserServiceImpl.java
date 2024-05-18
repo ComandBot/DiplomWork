@@ -9,15 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.UserMapperService;
+import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
-import ru.skypro.homework.utils.TypeImage;
 import ru.skypro.homework.utils.WorkWithFilesUtils;
-
 import java.io.*;
-import java.nio.file.Path;
 import java.util.Optional;
 
 @Service
@@ -29,13 +28,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapperService userMapperService;
     private final PasswordEncoder passwordEncoder;
+    private final ImageRepository imageRepository;
 
     public UserServiceImpl(UserRepository userRepository,
                            UserMapperService userMapperService,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, ImageRepository imageRepository) {
         this.userRepository = userRepository;
         this.userMapperService = userMapperService;
         this.passwordEncoder = passwordEncoder;
+        this.imageRepository = imageRepository;
     }
 
     public boolean setPassword(NewPasswordDto newPasswordDto) {
@@ -82,13 +83,23 @@ public class UserServiceImpl implements UserService {
             return;
         }
         UserEntity userEntity = userEntityOptional.get();
-        String path = WorkWithFilesUtils.loadImage(file, pathDir, userEntity.getId(), TypeImage.AVATAR);
-        userEntity.setImage(path);
+        ImageEntity imageEntity = WorkWithFilesUtils.loadImage(file, pathDir);
+        imageRepository.save(imageEntity);
+        userEntity.setImageEntity(imageEntity);
         userRepository.save(userEntity);
     }
 
-    public byte[] getImage(String url) {
-        return WorkWithFilesUtils.getImage(url, pathDir);
+    public byte[] getImage() {
+        String userName = getUserName();
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userName);
+        if (userEntityOptional.isEmpty()) {
+            return null;
+        }
+        ImageEntity imageEntity = userEntityOptional.get().getImageEntity();
+        if (imageEntity == null) {
+            return null;
+        }
+        return WorkWithFilesUtils.getImage(imageEntity.getNameImage(), pathDir);
     }
 
     private String getUserName() {

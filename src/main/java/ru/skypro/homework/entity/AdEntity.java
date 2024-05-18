@@ -14,7 +14,6 @@ public class AdEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String image;
     private int price;
 
     @Column(columnDefinition = "TEXT")
@@ -30,4 +29,8 @@ public class AdEntity {
 
     @OneToMany(mappedBy = "adEntity", fetch = FetchType.LAZY)
     private List<CommentEntity> commentEntities;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    ImageEntity imageEntity;
 }

@@ -21,8 +21,11 @@ public class UserEntity {
     private String phone;
     @Enumerated(EnumType.STRING)
     private Role role;
-    String image;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<AdEntity> adEntities;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private ImageEntity imageEntity;
 }

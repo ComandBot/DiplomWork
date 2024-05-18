@@ -10,16 +10,16 @@ import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ExtendedAdDto;
 import ru.skypro.homework.entity.AdEntity;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.AdMapperService;
 import ru.skypro.homework.mapper.CreateOrUpdateService;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
-import ru.skypro.homework.utils.TypeImage;
 import ru.skypro.homework.utils.WorkWithFilesUtils;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,16 +28,20 @@ import java.util.stream.Collectors;
 public class AdServiceImpl implements AdService {
     @Value(value = "${photo.dir.path}")
     private String photoDir;
+    @Value(value = "${ads.image}")
+    private String linkImage;
     private final AdRepository adRepository;
     private final UserRepository userRepository;
     private final AdMapperService adMapperService;
     private final CreateOrUpdateService createOrUpdateService;
+    private final ImageRepository imageRepository;
 
-    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, AdMapperService adMapperService, CreateOrUpdateService createOrUpdateService) {
+    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, AdMapperService adMapperService, CreateOrUpdateService createOrUpdateService, ImageRepository imageRepository) {
         this.adRepository = adRepository;
         this.userRepository = userRepository;
         this.adMapperService = adMapperService;
         this.createOrUpdateService = createOrUpdateService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class AdServiceImpl implements AdService {
                 .map(adMapperService::mappingToDto).collect(Collectors.toList());
         AdsDto adsDto = new AdsDto();
         adsDto.setCount(result.size());
-        adsDto.setResult(result);
+        adsDto.setResults(result);
         return adsDto;
     }
 
@@ -61,8 +65,9 @@ public class AdServiceImpl implements AdService {
         AdEntity adEntity = createOrUpdateService.mappingToEntity(properties);
         adEntity.setUser(userEntity);
         adRepository.save(adEntity);
-        String path = WorkWithFilesUtils.loadImage(image, photoDir, adEntity.getId(), TypeImage.AD);
-        adEntity.setImage(path);
+        ImageEntity imageEntity = WorkWithFilesUtils.loadImage(image, photoDir);
+        imageRepository.save(imageEntity);
+        adEntity.setImageEntity(imageEntity);
         adRepository.save(adEntity);
         return adMapperService.mappingToDto(adEntity);
     }
@@ -80,7 +85,10 @@ public class AdServiceImpl implements AdService {
         result.setAuthorLastName(adEntity.getUser().getLastName());
         result.setDescription(adEntity.getDescription());
         result.setEmail(adEntity.getUser().getEmail());
-        result.setImage(adEntity.getImage());
+        ImageEntity imageEntity = adEntity.getImageEntity();
+        if (imageEntity != null) {
+            result.setImage(String.format(linkImage, imageEntity.getId()));
+        }
         result.setPhone(adEntity.getUser().getPhone());
         result.setPrice(adEntity.getPrice());
         result.setTitle(adEntity.getTitle());
@@ -95,7 +103,11 @@ public class AdServiceImpl implements AdService {
         }
         AdEntity adEntity = adEntityOptional.get();
         adRepository.delete(adEntity);
-        WorkWithFilesUtils.deleteFile(adEntity.getImage());
+        ImageEntity imageEntity = adEntity.getImageEntity();
+        if (imageEntity != null) {
+            imageRepository.delete(imageEntity);
+            WorkWithFilesUtils.deleteFile(String.format(linkImage, imageEntity.getId()));
+        }
         return true;
     }
 
@@ -122,7 +134,7 @@ public class AdServiceImpl implements AdService {
         List<AdEntity> ads = adRepository.findAllByUser(userEntityOptional.get());
         AdsDto adsDto = new AdsDto();
         adsDto.setCount(ads.size());
-        adsDto.setResult(ads.stream().map(adMapperService::mappingToDto).collect(Collectors.toList()));
+        adsDto.setResults(ads.stream().map(adMapperService::mappingToDto).collect(Collectors.toList()));
         return adsDto;
     }
 

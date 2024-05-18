@@ -3,6 +3,7 @@ package ru.skypro.homework.mapper.impl;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.entity.CommentEntity;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.CommentMapperService;
 
@@ -17,7 +18,10 @@ public class CommentMapperServiceImpl implements CommentMapperService {
         CommentDto commentDto = new CommentDto();
         UserEntity userEntity = entity.getAdEntity().getUser();
         commentDto.setAuthor(userEntity.getId());
-        commentDto.setAuthorImage(userEntity.getImage());
+        ImageEntity imageEntity = userEntity.getImageEntity();
+        if (imageEntity != null) {
+            commentDto.setAuthorImage(imageEntity.getNameImage());
+        }
         commentDto.setAuthorFirstName(userEntity.getFirstName());
         long createAt = entity.getCreatedAt().toInstant(ZoneOffset.UTC).getEpochSecond();
         commentDto.setCreatedAt(createAt);
