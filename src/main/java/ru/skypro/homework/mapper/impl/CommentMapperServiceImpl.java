@@ -9,7 +9,11 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.CommentMapperService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.TimeZone;
 
 @Service
 public class CommentMapperServiceImpl implements CommentMapperService {
@@ -20,14 +24,16 @@ public class CommentMapperServiceImpl implements CommentMapperService {
     @Override
     public CommentDto mappingToDto(CommentEntity entity) {
         CommentDto commentDto = new CommentDto();
-        UserEntity userEntity = entity.getAdEntity().getUser();
+        UserEntity userEntity = entity.getUser();
         commentDto.setAuthor(userEntity.getId());
         ImageEntity imageEntity = userEntity.getImageEntity();
         if (imageEntity != null) {
             commentDto.setAuthorImage(String.format(linkImage, imageEntity.getId()));
         }
         commentDto.setAuthorFirstName(userEntity.getFirstName());
-        long createAt = entity.getCreatedAt().toInstant(ZoneOffset.UTC).toEpochMilli();
+        LocalDateTime date = entity.getCreatedAt();
+        ZonedDateTime zdt = date.atZone(ZoneId.of(TimeZone.getDefault().getID()));
+        long createAt = zdt.toInstant().toEpochMilli();;
         commentDto.setCreatedAt(createAt);
         commentDto.setPk(entity.getId());
         commentDto.setText(entity.getText());

@@ -26,4 +26,8 @@ public class CommentEntity {
     @JoinColumn(name = "ad_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AdEntity adEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }
