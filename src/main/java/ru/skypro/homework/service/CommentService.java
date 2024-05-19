@@ -15,4 +15,6 @@ public interface CommentService {
     CommentDto deleteComment(int adId, int commentId);
 
     CommentDto updateComment(int adId, int commentId, CreateOrUpdateCommentDto createOrUpdateCommentDto);
+
+    boolean hasCommentAction(int adId, int commentId);
 }

@@ -27,4 +27,6 @@ public interface AdService {
     AdsDto getAdsMe();
 
     byte[] updateImage(int id, MultipartFile image) throws IOException;
+
+    boolean hasAdAction(int adId);
 }
