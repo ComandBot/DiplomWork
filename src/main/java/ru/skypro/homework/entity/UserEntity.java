@@ -3,6 +3,7 @@ package ru.skypro.homework.entity;
 import lombok.*;
 import ru.skypro.homework.dto.Role;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Entity
@@ -12,6 +13,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Email
     private String email;
     private String password;
     @Column(name = "first_name")
