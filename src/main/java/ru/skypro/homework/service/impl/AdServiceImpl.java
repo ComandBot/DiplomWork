@@ -154,6 +154,22 @@ public class AdServiceImpl implements AdService {
         return WorkWithFilesUtils.getImage(resImage.getNameImage(), photoDir);
     }
 
+    @Override
+    public boolean hasAdAction(int adId) {
+        String username = getUserName();
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(username);
+        if (userEntityOptional.isEmpty()) {
+            return false;
+        }
+        Optional<AdEntity> adEntityOptional = adRepository.findById(adId);
+        if (adEntityOptional.isEmpty()) {
+            return false;
+        }
+        AdEntity adEntity = adEntityOptional.get();
+        UserEntity userEntity = userEntityOptional.get();
+        return userEntity.equals(adEntity.getUser());
+    }
+
 
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

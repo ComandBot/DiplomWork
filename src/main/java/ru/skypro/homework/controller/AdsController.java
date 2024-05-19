@@ -135,7 +135,7 @@ public class AdsController {
             }
     )
     @DeleteMapping("/{id}")
-    //@PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN') or @adServiceImpl.hasAdAction(#id)")
     public ResponseEntity<?> removeAd(@PathVariable int id) throws IOException {
         if (!adService.removeAd(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -177,7 +177,7 @@ public class AdsController {
             }
     )
     @PatchMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN') or @adServiceImpl.hasAdAction(#id)")
     public ResponseEntity<AdDto> updateAds(@PathVariable int id, @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
         AdDto adDto = adService.updateAds(id, createOrUpdateAdDto);
         if (adDto == null) {
@@ -200,7 +200,6 @@ public class AdsController {
             }
     )
     @GetMapping("/me")
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<AdsDto> getAdsMe() {
         return ResponseEntity.ok(adService.getAdsMe());
     }
@@ -359,6 +358,7 @@ public class AdsController {
             }
     )
     @DeleteMapping("/{adId}/comments/{commentId}")
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN') or @commentServiceImpl.hasCommentAction(#adId, #commentId)")
     public ResponseEntity<?> deleteComment(@PathVariable int adId, @PathVariable int commentId) {
         CommentDto commentDto = commentService.deleteComment(adId, commentId);
         if (commentDto == null) {
@@ -413,7 +413,7 @@ public class AdsController {
             }
     )
     @PatchMapping("/{adId}/comments/{commentId}")
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN') or @commentServiceImpl.hasCommentAction(#adId, #commentId)")
     public ResponseEntity<CommentDto> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
                                            @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
