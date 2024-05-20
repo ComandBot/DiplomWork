@@ -3,6 +3,7 @@ package ru.skypro.homework.entity;
 import lombok.*;
 import ru.skypro.homework.dto.Role;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<AdEntity> adEntities;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<CommentEntity> commentEntities;
 
     @OneToOne
     @JoinColumn(name = "image_id")

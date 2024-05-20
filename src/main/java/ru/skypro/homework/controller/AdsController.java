@@ -20,6 +20,7 @@ import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.CommentService;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -81,7 +82,7 @@ public class AdsController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
-                                   @RequestPart(name = "properties") CreateOrUpdateAdDto properties) throws IOException {
+                                   @Valid @RequestPart(name = "properties") CreateOrUpdateAdDto properties) throws IOException {
         AdDto adDto = adService.addAd(image, properties);
         return ResponseEntity.ok(adDto);
     }
@@ -319,7 +320,7 @@ public class AdsController {
     @PostMapping("/{id}/comments")
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     public ResponseEntity<CommentDto> addComment(@PathVariable int id,
-                                        @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
+                                        @Valid @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
         CommentDto commentDto = commentService.addComment(id, createOrUpdateCommentDto);
         if (commentDto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -416,7 +417,7 @@ public class AdsController {
     @PreAuthorize(value = "hasAuthority('ROLE_ADMIN') or @commentServiceImpl.hasCommentAction(#adId, #commentId)")
     public ResponseEntity<CommentDto> updateComment(@PathVariable int adId,
                                            @PathVariable int commentId,
-                                           @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
+                                           @Valid @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
         CommentDto commentDto = commentService.updateComment(adId, commentId, createOrUpdateCommentDto);
         if (commentDto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

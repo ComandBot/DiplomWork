@@ -19,6 +19,7 @@ import ru.skypro.homework.service.UserService;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ public class UsersController {
 
     )
     @PostMapping("/set_password")
-    public ResponseEntity<?> setPassword(@RequestBody NewPasswordDto newPasswordDto, HttpServletRequest request) {
+    public ResponseEntity<?> setPassword(@Valid @RequestBody NewPasswordDto newPasswordDto, HttpServletRequest request) {
         if (!userService.setPassword(newPasswordDto)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

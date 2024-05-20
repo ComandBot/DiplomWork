@@ -58,12 +58,17 @@ public class CommentServiceImpl implements CommentService {
         if (adEntityOptional.isEmpty()) {
             return null;
         }
+        Optional<UserEntity> userEntityOptional = getUserEntity();
+        if (userEntityOptional.isEmpty()) {
+            return null;
+        }
         AdEntity adEntity = adEntityOptional.get();
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setText(createOrUpdateCommentDto.getText());
         LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         commentEntity.setCreatedAt(date);
         commentEntity.setAdEntity(adEntity);
+        commentEntity.setUser(userEntityOptional.get());
         commentRepository.save(commentEntity);
         return commentMapperService.mappingToDto(commentEntity);
     }
@@ -86,8 +91,15 @@ public class CommentServiceImpl implements CommentService {
         if (commentEntityOptional.isEmpty()) {
             return null;
         }
+        /*
+        Optional<UserEntity> userEntityOptional = getUserEntity();
+        if (userEntityOptional.isEmpty()) {
+            return null;
+        }*/
+        //UserEntity userEntity = userEntityOptional.get();
         CommentEntity commentEntity = commentEntityOptional.get();
         commentEntity.setText(createOrUpdateCommentDto.getText());
+        //commentEntity.setUser(userEntityOptional.get());
         commentRepository.save(commentEntity);
         return commentMapperService.mappingToDto(commentEntity);
     }
@@ -106,11 +118,16 @@ public class CommentServiceImpl implements CommentService {
             return false;
         }
         UserEntity userEntity = userEntityOptional.get();
-        return userEntity.equals(commentEntity.getAdEntity().getUser());
+        return userEntity.equals(commentEntity.getUser());
     }
 
     private String getUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();
+    }
+
+    private Optional<UserEntity> getUserEntity() {
+        String username = getUserName();
+        return userRepository.findByEmail(username);
     }
 }
